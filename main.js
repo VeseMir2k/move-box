@@ -1,15 +1,20 @@
 class MoveBox {
-  constructor() {
-    this.createBox();
-    this.box = document.querySelector(".box");
+  constructor(id, x, y, color) {
+    this.createBox(id, x, y, color);
 
+    this.box = document.querySelector(`#box-${id}`);
     this.innerElement = false;
-    this.lX = 0;
-    this.lY = 0;
+    this.layerX = 0;
+    this.layerY = 0;
+    this.color = color;
+
+    this.increaseZIndex();
 
     this.box.addEventListener("mousedown", this.handleMouseDown);
     document.body.addEventListener("mouseup", this.handleMouseUp);
   }
+
+  increaseZIndex = () => zIndex++;
 
   controlMouseMove = () => {
     if (this.innerElement) {
@@ -20,42 +25,67 @@ class MoveBox {
   };
 
   handleMouseMove = (event) => {
-    const x = this.getPosition(event).x;
-    const y = this.getPosition(event).y;
+    const x = this.getPositionCursor(event).x;
+    const y = this.getPositionCursor(event).y;
 
-    this.setPositionElement(this.box, x, y, this.lX, this.lY);
+    this.setPositionMoveElement(this.box, x, y, this.layerX, this.layerY);
   };
 
   handleMouseDown = (event) => {
     this.innerElement = true;
-    this.lX = this.getLayerElement(event).x;
-    this.lY = this.getLayerElement(event).y;
-    this.changeColorElement(this.box, "grey");
+
+    this.layerX = this.getLayerElement(event).x;
+    this.layerY = this.getLayerElement(event).y;
+
+    // this.setColorElement(this.box, "grey");
+    this.setBrightnessElement(this.box, 0.5);
+    this.setZIndexElement(this.box, this.increaseZIndex());
+
     this.controlMouseMove();
   };
 
   handleMouseUp = () => {
     this.innerElement = false;
-    this.changeColorElement(this.box, "black");
+
+    // this.setColorElement(this.box, this.color);
+    this.setBrightnessElement(this.box, 1);
+
     this.controlMouseMove();
   };
 
-  createBox = () => {
+  createBox = (id, x, y, color) => {
     const box = document.createElement("div");
+    this.setPositionElement(box, x, y);
+    this.setColorElement(box, color);
+    box.setAttribute("id", `box-${id}`);
     box.classList.add("box");
     document.body.appendChild(box);
   };
 
-  setPositionElement = (element, x, y, lX, lY) => {
-    element.style.top = `${y - lY}px`;
-    element.style.left = `${x - lX}px`;
+  setPositionElement = (element, x, y) => {
+    element.style.top = `${y}px`;
+    element.style.left = `${x}px`;
   };
 
-  getPosition = (event) => ({ x: event.clientX, y: event.clientY });
+  setPositionMoveElement = (element, x, y, layerX, layerY) => {
+    element.style.top = `${y - layerY}px`;
+    element.style.left = `${x - layerX}px`;
+  };
+
+  getPositionCursor = (event) => ({ x: event.clientX, y: event.clientY });
 
   getLayerElement = (event) => ({ x: event.layerX, y: event.layerY });
 
-  changeColorElement = (element, color) => (element.style.background = color);
+  setColorElement = (element, color) => (element.style.background = color);
+
+  setBrightnessElement = (element, brightness) =>
+    (element.style.filter = `brightness(${brightness})`);
+
+  setZIndexElement = (element, index) => (element.style.zIndex = index);
 }
 
-const moveBox = new MoveBox();
+let zIndex = 0;
+
+const moveBox = new MoveBox(1, 30, 50, "red");
+const moveBox2 = new MoveBox(2, 100, 300, "blue");
+const moveBox3 = new MoveBox(3, 200, 400, "pink");
