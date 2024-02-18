@@ -3,7 +3,7 @@ class MoveBox {
     this.createBox();
     this.box = document.querySelector(".box");
 
-    this.onElement = false;
+    this.innerElement = false;
     this.lX = 0;
     this.lY = 0;
 
@@ -12,7 +12,7 @@ class MoveBox {
   }
 
   controlMouseMove = () => {
-    if (this.onElement) {
+    if (this.innerElement) {
       document.body.addEventListener("mousemove", this.handleMouseMove);
     } else {
       document.body.removeEventListener("mousemove", this.handleMouseMove);
@@ -27,7 +27,7 @@ class MoveBox {
   };
 
   handleMouseDown = (event) => {
-    this.onElement = true;
+    this.innerElement = true;
     this.lX = this.getLayerElement(event).x;
     this.lY = this.getLayerElement(event).y;
     this.changeColorElement(this.box, "grey");
@@ -35,7 +35,7 @@ class MoveBox {
   };
 
   handleMouseUp = () => {
-    this.onElement = false;
+    this.innerElement = false;
     this.changeColorElement(this.box, "black");
     this.controlMouseMove();
   };
